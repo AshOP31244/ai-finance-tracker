@@ -1,6 +1,10 @@
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
+import os
+import dj_database_url
+
+# ==================== BASE SETTINGS ====================
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,9 +15,10 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'your-app-name.onrender.com']
 
-# Application definition
+# ==================== APPLICATIONS ====================
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -33,6 +38,8 @@ INSTALLED_APPS = [
     'budgets',
     'analytics',
 ]
+
+# ==================== MIDDLEWARE ====================
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -65,22 +72,49 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'finance_tracker.wsgi.application'
 
-# Custom User Model
+# ==================== CUSTOM USER MODEL ====================
+
 AUTH_USER_MODEL = 'users.CustomUser'
 
-# Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='finance_db'),
-        'USER': config('DB_USER', default='postgres'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5433'),
-    }
-}
+# ==================== DATABASE CONFIGURATION ====================
 
-# Password validation
+# ORIGINAL DATABASE CONFIG - Commented out for Render
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': config('DB_NAME', default='finance_db'),
+#         'USER': config('DB_USER', default='postgres'),
+#         'PASSWORD': config('DB_PASSWORD'),
+#         'HOST': config('DB_HOST', default='localhost'),
+#         'PORT': config('DB_PORT', default='5433'),
+#     }
+# }
+
+# NEW DATABASE CONFIG FOR RENDER
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    # Local development database
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'finance_db',
+            'USER': 'postgres',
+            'PASSWORD': 'your_password',
+            'HOST': 'localhost',
+            'PORT': '5433',
+        }
+    }
+
+# ==================== PASSWORD VALIDATION ====================
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -96,7 +130,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# REST Framework Configuration
+# ==================== REST FRAMEWORK & JWT ====================
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -108,7 +143,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 50,
 }
 
-# JWT Settings
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
@@ -116,27 +150,37 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
-# CORS Settings (Allow React frontend to communicate with Django backend)
+# ==================== CORS SETTINGS ====================
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://your-frontend-url.vercel.app",  # Optional for production frontend
 ]
-
 CORS_ALLOW_CREDENTIALS = True
 
-# Internationalization
+# ==================== INTERNATIONALIZATION ====================
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+# ==================== STATIC & MEDIA FILES ====================
+
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Media files (User uploads)
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default primary key field type
+# ==================== SECURITY SETTINGS (for Render) ====================
+
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+
+# ==================== DEFAULT PRIMARY KEY ====================
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
