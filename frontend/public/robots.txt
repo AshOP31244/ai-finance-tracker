@@ -1,0 +1,23 @@
+User-agent: *
+Disallow:
+```
+
+**Save!** ✅
+
+---
+
+### **4. Optional: Add favicon (simple emoji icon)**
+
+**📁 Create file:** `D:\Projects\finance-tracker\frontend\public\favicon.ico`
+
+You can skip this for now, or download a free icon from https://favicon.io/
+
+---
+
+## **Your public folder should now have:**
+```
+frontend/public/
+├── index.html       ✅ (just created)
+├── manifest.json    ✅ (just created)
+├── robots.txt       ✅ (just created)
+└── favicon.ico      ⚠️ (optional)
