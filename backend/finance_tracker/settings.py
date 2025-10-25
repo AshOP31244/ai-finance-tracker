@@ -15,7 +15,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'your-app-name.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ai-finance-tracker-api.onrender.com']
 
 # ==================== APPLICATIONS ====================
 
@@ -155,7 +155,7 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://your-frontend-url.vercel.app",  # Optional for production frontend
+    "https://ai-finance-tracker-frontend.onrender.com",  # Add your actual frontend URL
 ]
 CORS_ALLOW_CREDENTIALS = True
 
