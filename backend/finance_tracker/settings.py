@@ -93,6 +93,7 @@ AUTH_USER_MODEL = 'users.CustomUser'
 # NEW DATABASE CONFIG FOR RENDER
 DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
+    # Production: Use PostgreSQL from Render
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
@@ -101,15 +102,11 @@ if DATABASE_URL:
         )
     }
 else:
-    # Local development database
+    # Local development: Use SQLite
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'finance_db',
-            'USER': 'postgres',
-            'PASSWORD': 'your_password',
-            'HOST': 'localhost',
-            'PORT': '5433',
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 

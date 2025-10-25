@@ -2,10 +2,9 @@ from django.core.management.base import BaseCommand
 from transactions.models import Category
 
 class Command(BaseCommand):
-    help = 'Create default income and expense categories for all users'
+    help = 'Create default income and expense categories'
 
     def handle(self, *args, **kwargs):
-        # Define expense categories with emojis and colors
         expense_categories = [
             {'name': 'Food & Dining', 'icon': '🍔', 'color': '#EF4444'},
             {'name': 'Transportation', 'icon': '🚗', 'color': '#F59E0B'},
@@ -19,7 +18,6 @@ class Command(BaseCommand):
             {'name': 'Other Expenses', 'icon': '📝', 'color': '#6B7280'},
         ]
         
-        # Define income categories
         income_categories = [
             {'name': 'Salary', 'icon': '💰', 'color': '#10B981'},
             {'name': 'Freelance', 'icon': '💼', 'color': '#3B82F6'},
@@ -30,7 +28,6 @@ class Command(BaseCommand):
         
         created_count = 0
         
-        # Create expense categories
         for cat_data in expense_categories:
             category, created = Category.objects.get_or_create(
                 name=cat_data['name'],
@@ -39,16 +36,13 @@ class Command(BaseCommand):
                 defaults={
                     'icon': cat_data['icon'],
                     'color': cat_data['color'],
-                    'user': None  # Default categories don't belong to any user
+                    'user': None
                 }
             )
             if created:
                 created_count += 1
-                self.stdout.write(
-                    self.style.SUCCESS(f'✓ Created expense category: {cat_data["name"]}')
-                )
+                self.stdout.write(self.style.SUCCESS(f'✓ Created: {cat_data["name"]}'))
         
-        # Create income categories
         for cat_data in income_categories:
             category, created = Category.objects.get_or_create(
                 name=cat_data['name'],
@@ -62,10 +56,6 @@ class Command(BaseCommand):
             )
             if created:
                 created_count += 1
-                self.stdout.write(
-                    self.style.SUCCESS(f'✓ Created income category: {cat_data["name"]}')
-                )
+                self.stdout.write(self.style.SUCCESS(f'✓ Created: {cat_data["name"]}'))
         
-        self.stdout.write(
-            self.style.SUCCESS(f'\n✅ Successfully created {created_count} default categories!')
-        )
+        self.stdout.write(self.style.SUCCESS(f'\n✅ Created {created_count} categories!'))
